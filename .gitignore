@@ -1,0 +1,22 @@
+# Erlang build artifacts
+.rebar3
+_build/
+_checkouts/
+rebar.lock
+
+# Erlang crash dumps
+erl_crash.dump
+*.beam
+*.plt
+*.swp
+*.swo
+
+# Generated documentation
+doc/edoc/
+
+# Test coverage
+cover/
+
+# OS specific files
+.DS_Store
+Thumbs.db 

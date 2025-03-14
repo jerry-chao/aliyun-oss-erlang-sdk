@@ -1,0 +1,19 @@
+{application, aliyun_oss, [
+    {description, "Aliyun OSS SDK for Erlang"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {mod, {aliyun_oss_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        hackney,
+        jsx,
+        base64url,
+        erlsha2,
+        uuid
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["MIT"]},
+    {links, [{"GitHub", "https://github.com/user/aliyun-oss-erlang-sdk"}]}
+]}. 

@@ -248,7 +248,7 @@ to_binary(Value) when is_list(Value) ->
 
 %% @private Get bucket host
 -spec get_bucket_host(Bucket :: aliyun_oss_bucket:bucket()) -> binary().
-get_bucket_host(Bucket) ->
+get_bucket_host(_Bucket) ->
     % This is a simplified implementation
     % In a real implementation, we would access the host from the bucket record
     <<"bucket.oss-cn-hangzhou.aliyuncs.com">>.
@@ -308,7 +308,7 @@ add_custom_headers(Headers, Options) ->
 
 %% @private Sign the request
 -spec sign_request(Bucket :: aliyun_oss_bucket:bucket(), Method :: atom(), Headers :: list()) -> list().
-sign_request(Bucket, Method, Headers) ->
+sign_request(_Bucket, _Method, Headers) ->
     % This is a simplified implementation
     % In a real implementation, we would call aliyun_oss_auth:sign_request
     % with the auth object from the bucket
@@ -316,14 +316,14 @@ sign_request(Bucket, Method, Headers) ->
 
 %% @private Make URL for object operations
 -spec make_object_url(Bucket :: aliyun_oss_bucket:bucket(), Key :: binary()) -> binary().
-make_object_url(Bucket, Key) ->
+make_object_url(_Bucket, Key) ->
     % This is a simplified implementation
     % In a real implementation, we would construct the URL based on the bucket's endpoint and name
     <<"http://bucket.oss-cn-hangzhou.aliyuncs.com/", Key/binary>>.
 
 %% @private Make URL for bucket operations
 -spec make_bucket_url(Bucket :: aliyun_oss_bucket:bucket()) -> binary().
-make_bucket_url(Bucket) ->
+make_bucket_url(_Bucket) ->
     % This is a simplified implementation
     % In a real implementation, we would construct the URL based on the bucket's endpoint and name
     <<"http://bucket.oss-cn-hangzhou.aliyuncs.com">>.

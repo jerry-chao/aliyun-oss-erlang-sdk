@@ -29,7 +29,7 @@ Add the SDK to your `rebar.config`:
 
 ```erlang
 {deps, [
-    {aliyun_oss, {git, "https://github.com/user/aliyun-oss-erlang-sdk.git", {tag, "0.1.0"}}}
+    {aliyun_oss, {git, "https://github.com/jerry-chao/aliyun-oss-erlang-sdk.git", {tag, "0.1.0"}}}
 ]}.
 ```
 
@@ -39,17 +39,24 @@ Add the SDK to your `rebar.config`:
 
 ```erlang
 % Create auth and bucket objects
+% bucket:sandbox-hcb-chatmessage
+% Endpoint=http://oss-cn-beijing.aliyuncs.com
+% region=cn-beijing
 Auth = aliyun_oss:auth(AccessKeyId, AccessKeySecret),
-Bucket = aliyun_oss:bucket(Auth, Endpoint, BucketName),
+Endpoint = <<"http://oss-cn-beijing.aliyuncs.com">>,
+BucketName = <<"sandbox-hcb-chatmessage">>,
+Region = <<"cn-beijing">>,
+Bucket = aliyun_oss:bucket(Auth, Endpoint, BucketName, Region),
 
 % Put an object
-{ok, _} = aliyun_oss:put_object(Bucket, "example.txt", "Hello, OSS!"),
+ObjectName = <<"msync/test/zhangchao.txt">>,
+{ok, _} = aliyun_oss:put_object(Bucket, ObjectName, <<"Hello, OSS!">>),
 
 % Get an object
-{ok, #{body := Body}} = aliyun_oss:get_object(Bucket, "example.txt"),
+{ok, #{body := Body}} = aliyun_oss:get_object(Bucket, ObjectName),
 
 % Delete an object
-{ok, _} = aliyun_oss:delete_object(Bucket, "example.txt"),
+{ok, _} = aliyun_oss:delete_object(Bucket, ObjectName),
 
 % List objects
 {ok, #{objects := Objects}} = aliyun_oss:list_objects(Bucket).

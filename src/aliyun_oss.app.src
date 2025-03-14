@@ -9,7 +9,7 @@
         hackney,
         jsx,
         base64url,
-        erlsha2,
+        crypto,
         uuid
     ]},
     {env, []},

@@ -6,6 +6,7 @@
 
 -export([
     new/3,
+    new/4,
     put_object/3,
     put_object/4,
     get_object/2,
@@ -18,6 +19,7 @@
     auth :: aliyun_oss_auth:auth(),
     endpoint :: binary(),
     bucket_name :: binary(),
+    region :: binary(),
     host :: binary()
 }).
 
@@ -31,14 +33,21 @@
 %% @doc Create a new bucket object
 -spec new(Auth :: aliyun_oss_auth:auth(), Endpoint :: binary() | string(), BucketName :: binary() | string()) -> bucket().
 new(Auth, Endpoint, BucketName) ->
+    new(Auth, Endpoint, BucketName, <<"oss-cn-hangzhou">>).
+
+%% @doc Create a new bucket object with region
+-spec new(Auth :: aliyun_oss_auth:auth(), Endpoint :: binary() | string(), BucketName :: binary() | string(), Region :: binary() | string()) -> bucket().
+new(Auth, Endpoint, BucketName, Region) ->
     EndpointBin = to_binary(Endpoint),
     BucketNameBin = to_binary(BucketName),
+    RegionBin = to_binary(Region),
     Host = <<BucketNameBin/binary, ".", (strip_protocol(EndpointBin))/binary>>,
     
     #bucket{
         auth = Auth,
         endpoint = EndpointBin,
         bucket_name = BucketNameBin,
+        region = RegionBin,
         host = Host
     }.
 

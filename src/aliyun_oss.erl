@@ -10,7 +10,7 @@
     auth/3,
     
     % Bucket operations
-    bucket/3,
+    bucket/4,
     
     % Object operations
     put_object/3,
@@ -47,10 +47,10 @@ auth(AccessKeyId, AccessKeySecret, SecurityToken) ->
     aliyun_oss_auth:new(AccessKeyId, AccessKeySecret, SecurityToken).
 
 %% @doc Create a new bucket object
--spec bucket(Auth :: aliyun_oss_auth:auth(), Endpoint :: binary() | string(), BucketName :: binary() | string()) -> 
+-spec bucket(Auth :: aliyun_oss_auth:auth(), Endpoint :: binary() | string(), BucketName :: binary() | string(), Region :: binary() | string()) -> 
     aliyun_oss_bucket:bucket().
-bucket(Auth, Endpoint, BucketName) ->
-    aliyun_oss_bucket:new(Auth, Endpoint, BucketName).
+bucket(Auth, Endpoint, BucketName, Region) ->
+    aliyun_oss_bucket:new(Auth, Endpoint, BucketName, Region).
 
 %% @doc Put an object into the bucket
 -spec put_object(Bucket :: aliyun_oss_bucket:bucket(), Key :: binary() | string(), Content :: binary() | string()) -> 

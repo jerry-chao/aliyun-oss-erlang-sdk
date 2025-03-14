@@ -15,10 +15,11 @@ run() ->
     AccessKeySecret = os:getenv("OSS_ACCESS_KEY_SECRET"),
     Endpoint = os:getenv("OSS_ENDPOINT"),
     BucketName = os:getenv("OSS_BUCKET_NAME"),
+    Region = os:getenv("OSS_REGION", "oss-cn-hangzhou"),
     
     % Create auth and bucket objects
     Auth = aliyun_oss:auth(AccessKeyId, AccessKeySecret),
-    Bucket = aliyun_oss:bucket(Auth, Endpoint, BucketName),
+    Bucket = aliyun_oss:bucket(Auth, Endpoint, BucketName, Region),
     
     % Define a key for our object
     Key = "example.txt",

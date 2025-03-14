@@ -64,7 +64,7 @@ sign_request(Auth, Method, Headers) ->
     % Create string to sign
     StringToSign = create_string_to_sign(Method, HeadersWithToken),
     
-    % Sign the string
+    % Sign the string using crypto module
     Signature = base64:encode(
         crypto:mac(hmac, sha, Auth#auth.access_key_secret, StringToSign)
     ),
@@ -140,7 +140,7 @@ canonicalize_oss_headers(Headers) ->
 
 %% @private Canonicalize resource
 -spec canonicalize_resource(Headers :: [{binary(), binary()}]) -> binary().
-canonicalize_resource(Headers) ->
+canonicalize_resource(_Headers) ->
     % In a real implementation, this would extract the bucket and object from the URL
     % For simplicity, we're just using a placeholder
     <<"/bucket/object">>. 

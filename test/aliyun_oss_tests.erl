@@ -21,8 +21,8 @@ bucket_test() ->
     Auth = aliyun_oss:auth(<<"test_id">>, <<"test_secret">>),
     
     % Test creating bucket object
-    Bucket = aliyun_oss:bucket(Auth, <<"http://oss-cn-hangzhou.aliyuncs.com">>, <<"test-bucket">>),
-    ?assertMatch({bucket, _, _, _, _}, Bucket).
+    Bucket = aliyun_oss:bucket(Auth, <<"http://oss-cn-hangzhou.aliyuncs.com">>, <<"test-bucket">>, <<"oss-cn-hangzhou">>),
+    ?assertMatch({bucket, _, _, _, _, _}, Bucket).
 
 % Mock tests with meck
 mock_test_() ->
@@ -45,7 +45,7 @@ mock_test_() ->
           fun() ->
               % Create auth and bucket objects
               Auth = aliyun_oss:auth(<<"test_id">>, <<"test_secret">>),
-              Bucket = aliyun_oss:bucket(Auth, <<"http://oss-cn-hangzhou.aliyuncs.com">>, <<"test-bucket">>),
+              Bucket = aliyun_oss:bucket(Auth, <<"http://oss-cn-hangzhou.aliyuncs.com">>, <<"test-bucket">>, <<"oss-cn-hangzhou">>),
               
               % Test put_object
               Result = aliyun_oss:put_object(Bucket, <<"test.txt">>, <<"Hello, OSS!">>),

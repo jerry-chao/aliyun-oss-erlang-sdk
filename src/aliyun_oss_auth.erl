@@ -43,9 +43,11 @@ new(AccessKeyId, AccessKeySecret, SecurityToken) ->
 %% @doc Sign an HTTP request with the auth credentials
 -spec sign_request(Auth :: auth(), Method :: atom(), Headers :: [{binary(), binary()}]) -> [{binary(), binary()}].
 sign_request(Auth, Method, Headers) ->
+    % Check if Date header exists, if not, use current time
     Date = case proplists:get_value(<<"Date">>, Headers) of
         undefined ->
-            Now = calendar:universal_time(),
+            % Get current time in local timezone
+            Now = aliyun_oss_timezone:get_local_time(),
             DateStr = httpd_util:rfc1123_date(Now),
             DateBin = list_to_binary(DateStr),
             [{<<"Date">>, DateBin} | Headers];
@@ -100,7 +102,7 @@ create_string_to_sign(Method, Headers) ->
     % Get canonicalized resource
     CanonicalizedResource = canonicalize_resource(Headers),
     
-    % Combine all parts
+    % Combine all parts with proper newlines
     StringToSign = <<
         (list_to_binary(MethodStr))/binary, "\n",
         ContentMD5/binary, "\n",
@@ -140,7 +142,17 @@ canonicalize_oss_headers(Headers) ->
 
 %% @private Canonicalize resource
 -spec canonicalize_resource(Headers :: [{binary(), binary()}]) -> binary().
-canonicalize_resource(_Headers) ->
-    % In a real implementation, this would extract the bucket and object from the URL
-    % For simplicity, we're just using a placeholder
-    <<"/bucket/object">>. 
+canonicalize_resource(Headers) ->
+    % Get bucket and object from headers
+    Bucket = proplists:get_value(<<"x-oss-bucket">>, Headers),
+    Object = proplists:get_value(<<"x-oss-object">>, Headers),
+    
+    % Build canonicalized resource
+    case {Bucket, Object} of
+        {undefined, _} ->
+            <<"/">>;
+        {Bucket, undefined} ->
+            <<"/", Bucket/binary>>;
+        {Bucket, Object} ->
+            <<"/", Bucket/binary, "/", Object/binary>>
+    end. 

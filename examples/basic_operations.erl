@@ -13,9 +13,9 @@ run() ->
     % Set your credentials and endpoint
     AccessKeyId = os:getenv("OSS_ACCESS_KEY_ID"),
     AccessKeySecret = os:getenv("OSS_ACCESS_KEY_SECRET"),
-    Endpoint = os:getenv("OSS_ENDPOINT"),
-    BucketName = os:getenv("OSS_BUCKET_NAME"),
-    Region = os:getenv("OSS_REGION", "oss-cn-hangzhou"),
+    Endpoint = os:getenv("OSS_ENDPOINT", <<"http://oss-cn-beijing.aliyuncs.com">>),
+    BucketName = os:getenv("OSS_BUCKET_NAME", <<"sandbox-hcb-chatmessage">>),
+    Region = os:getenv("OSS_REGION", "cn-beijing"),
     
     % Create auth and bucket objects
     Auth = aliyun_oss:auth(AccessKeyId, AccessKeySecret),
@@ -54,13 +54,13 @@ run() ->
     end,
     
     % List objects in the bucket
-    io:format("Listing objects in bucket ~s...~n", [BucketName]),
-    case aliyun_oss:list_objects(Bucket) of
-        {ok, #{objects := Objects} = Result4} ->
-            io:format("List successful: ~p~n", [Result4]),
-            io:format("Objects: ~p~n", [Objects]);
-        {error, Error4} ->
-            io:format("List failed: ~p~n", [Error4])
-    end,
+    % io:format("Listing objects in bucket ~s...~n", [BucketName]),
+    % case aliyun_oss:list_objects(Bucket) of
+    %     {ok, #{objects := Objects} = Result4} ->
+    %         io:format("List successful: ~p~n", [Result4]),
+    %         io:format("Objects: ~p~n", [Objects]);
+    %     {error, Error4} ->
+    %         io:format("List failed: ~p~n", [Error4])
+    % end,
     
     ok. 

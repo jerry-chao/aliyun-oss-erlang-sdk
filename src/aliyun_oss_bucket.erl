@@ -8,7 +8,6 @@
     new/3,
     new/4,
     put_object/3,
-    put_object/4,
     get_object/2,
     delete_object/2,
     list_objects/1,
@@ -55,40 +54,29 @@ new(Auth, Endpoint, BucketName, Region) ->
 -spec put_object(Bucket :: bucket(), Key :: binary() | string(), Content :: binary() | string()) -> 
     {ok, map()} | {error, term()}.
 put_object(Bucket, Key, Content) ->
-    put_object(Bucket, Key, Content, []).
-
-%% @doc Put an object into the bucket with options
--spec put_object(Bucket :: bucket(), Key :: binary() | string(), Content :: binary() | string(), Options :: list()) -> 
-    {ok, map()} | {error, term()}.
-put_object(Bucket, Key, Content, Options) ->
-    ContentBin = to_binary(Content),
-    KeyBin = to_binary(Key),
-    
-    % Prepare headers
-    Headers0 = [
-        {<<"Host">>, Bucket#bucket.host},
-        {<<"Content-Type">>, get_content_type(KeyBin, Options)},
-        {<<"Content-Length">>, integer_to_binary(byte_size(ContentBin))}
-    ],
-    
-    % Add Content-MD5 if requested
-    Headers1 = case proplists:get_value(content_md5, Options, false) of
-        true ->
-            MD5 = base64:encode(crypto:hash(md5, ContentBin)),
-            [{<<"Content-MD5">>, MD5} | Headers0];
-        false ->
-            Headers0
+    % Convert key to binary if needed
+    KeyBin = case is_binary(Key) of
+        true -> Key;
+        false -> list_to_binary(Key)
     end,
     
-    % Add custom headers from options
-    Headers2 = add_custom_headers(Headers1, Options),
+    % Calculate content MD5
+    ContentMD5 = base64:encode(crypto:hash(md5, Content)),
     
-    % Sign the request
-    SignedHeaders = aliyun_oss_auth:sign_request(Bucket#bucket.auth, put, Headers2),
+    % Create headers with required fields
+    Headers = [
+        {<<"Content-Type">>, <<"application/octet-stream">>},
+        {<<"Content-MD5">>, ContentMD5},
+        {<<"x-oss-bucket">>, Bucket#bucket.bucket_name},
+        {<<"x-oss-object">>, KeyBin}
+    ],
+    
+    % Sign request
+    SignedHeaders = aliyun_oss_auth:sign_request(Bucket#bucket.auth, put, Headers),
     
     % Make the request
     Url = make_object_url(Bucket, KeyBin),
-    case hackney:request(put, Url, SignedHeaders, ContentBin, []) of
+    case hackney:request(put, Url, SignedHeaders, Content, []) of
         {ok, StatusCode, ResponseHeaders, ClientRef} when StatusCode >= 200, StatusCode < 300 ->
             {ok, _Body} = hackney:body(ClientRef),
             {ok, #{
@@ -197,7 +185,7 @@ list_objects(Bucket, Options) ->
     QueryParams = build_list_objects_query(Options),
     
     % Make the request
-    Url = make_bucket_url(Bucket) ++ QueryParams,
+    Url = <<(make_bucket_url(Bucket))/binary, QueryParams/binary>>,
     case hackney:request(get, Url, SignedHeaders, <<>>, []) of
         {ok, StatusCode, ResponseHeaders, ClientRef} when StatusCode >= 200, StatusCode < 300 ->
             {ok, Body} = hackney:body(ClientRef),

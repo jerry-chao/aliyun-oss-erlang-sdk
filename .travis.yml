@@ -1,0 +1,24 @@
+sudo: required
+
+dist: noble
+
+language: erlang
+otp_release:
+  - "23.3.1"
+
+before_install:
+  - sudo apt-get update
+
+before_cache:
+  - rm -rf _build/test/logs
+
+cache:
+  directories:
+    - _build
+
+jobs:
+  fast_finish: true
+  include:
+    - name: 'compile'
+      script:
+        - rebar3 compile
